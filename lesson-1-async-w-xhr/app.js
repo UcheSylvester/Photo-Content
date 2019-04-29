@@ -9,4 +9,6 @@
         responseContainer.innerHTML = '';
         searchedForText = searchField.value;
     });
+
+    console.log(searchField)
 })();
