@@ -37,13 +37,41 @@
                     <figcaption>${searchedForText} by ${firstImage.user.name}</figcaption>
                 </figure>`
             } else {
-                htmlContent = `<div class="error-no-image">OOPS!! There is no image result...</div>`
+                htmlContent = `<div class="error-no-image">OOPS!! NO Image Available...</div>`
             }
 
             responseContainer.insertAdjacentHTML('afterbegin', htmlContent)
 
         }
-        
+
+        const articleRequest = new XMLHttpRequest();
+        articleRequest.open('GET', `http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${searchedForText}&api-key=D8vhAXpJCLAebrGLBbCohT84d5UM882W`);
+        articleRequest.onload = addArticle;
+        articleRequest.send();
+
+        function addArticle() {
+            // console.log('working');
+            // debugger;
+            let htmlContent = '';
+            const data = JSON.parse(this.responseText);
+            const articles = data.response.docs;
+            // console.log(articles);
+            if(data && articles && articles.length > 1) {
+                htmlContent = '<ul>' + articles.map(article => 
+                    `<li class="article">
+                        <h2><a href="${article.web_url}">${article.headline.main}</a></h2>
+                        <p>${article.snippet}</p>
+                    </li>`
+                ).join('') + '</ul>';
+            } else {
+                htmlContent = '<div class="error-no-articles">No articles available</div>'
+            }
+
+
+            
+            responseContainer.insertAdjacentHTML('beforeend', htmlContent)
+
+        }
     });
 
     
